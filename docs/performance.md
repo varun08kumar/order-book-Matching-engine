@@ -10,7 +10,7 @@ in `benchmarks/` (Release build, `-O3` via `CMAKE_BUILD_TYPE=Release`) on:
 - Compiler: AppleClang 21 (Clang), `-O3`, no sanitizers.
 
 These are **illustrative measurements from one development machine**, not
-formal targets or guaranteed SLAs — different hardware, OS scheduler
+formal targets or guaranteed SLAs - different hardware, OS scheduler
 behavior, and background load will change them. What is guaranteed is that
 every number below came from a benchmark that actually measured it (see
 `benchmarks/bench_harness.hpp`): latency is per-operation wall-clock time
@@ -26,7 +26,7 @@ bench_end_to_end_tcp` then run each binary in `build/benchmarks/`.
 ## 1. Order insertion
 
 200,000 resting BUY limit orders inserted into an otherwise-empty book (no
-SELL side present, so nothing matches — isolates accept+insert cost).
+SELL side present, so nothing matches - isolates accept+insert cost).
 
 | Book | ops/sec | p50 | p95 | p99 | p99.9 | allocations |
 |------|--------:|----:|----:|----:|------:|------------:|
@@ -37,7 +37,7 @@ SELL side present, so nothing matches — isolates accept+insert cost).
 `Order` heap allocation) but not zero: every *new distinct price level* is
 still a `std::map` node allocation in both implementations, and the
 `unordered_map` order-id index also allocates/rehashes in both. That
-residual cost is deliberate and documented in `docs/architecture.md` — it
+residual cost is deliberate and documented in `docs/architecture.md` - it
 was not eliminated because doing so (e.g. a custom pooled-node map
 allocator) was judged out of scope relative to its benefit at these order
 counts.
@@ -53,7 +53,7 @@ sequential) order.
 | `fast::OrderBook`  | 3,575,431 | 250 ns | 458 ns | 583 ns | 750 ns | 21 |
 
 Both implementations do effectively zero allocation on cancel (freeing
-memory dominates: 486,554 vs 286,676 deallocations — the fast book's pool
+memory dominates: 486,554 vs 286,676 deallocations - the fast book's pool
 `Release` plus map-node erase frees less than the naive book's list-node
 plus map-node erase). Latency is dominated by the `std::map`/
 `std::unordered_map` lookups both books share, which is why the gap here is
@@ -101,7 +101,7 @@ engine-driving thread.
 |--------:|-----------:|----:|----:|----:|------:|
 | 46,501 | 46,501 | 20,667 ns | 26,542 ns | 45,792 ns | 105,500 ns |
 
-Three orders of magnitude slower than the in-process matching benchmark —
+Three orders of magnitude slower than the in-process matching benchmark -
 expected, since this now pays for two loopback TCP round-trips' worth of
 syscalls and context switches per operation instead of a single function
 call. This is also why the architecture keeps network I/O off the matching
@@ -118,7 +118,7 @@ Optimized (Phase 10, `fast::OrderBook`):
   node was a separate heap allocation).
 
 Deliberately left alone (documented, not overlooked):
-- Price-level storage is still `std::map` in both books — allocates a tree
+- Price-level storage is still `std::map` in both books - allocates a tree
   node per *distinct price level*, not per order. At realistic order-to-
   price-level ratios this is a small fraction of total allocations (see the
   insertion benchmark: 278,263 allocations for 200,000 orders is roughly
