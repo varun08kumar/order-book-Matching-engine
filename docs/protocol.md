@@ -2,7 +2,7 @@
 
 Transport is plain TCP. Each client holds one persistent connection
 ("session"). All multi-byte integers are little-endian. There is no
-compression or TLS — this is an educational protocol.
+compression or TLS - this is an educational protocol.
 
 ## Framing
 
@@ -17,7 +17,7 @@ Every message on the wire is a length-prefixed frame:
 `length` counts only the bytes in `body` (it does not include itself). The
 decoder (`FrameDecoder`) buffers incoming bytes across an arbitrary number of
 `recv()` calls and only yields a frame once all `length` body bytes have
-arrived — a single `recv()` may contain zero, one, a partial, or several
+arrived - a single `recv()` may contain zero, one, a partial, or several
 frames, and the decoder makes no assumption either way. Frames larger than
 `FrameDecoder::kMaxFrameBytes` (64 KiB) are treated as a protocol violation
 and the connection is closed.
@@ -68,5 +68,5 @@ socket recv() -> FrameDecoder (framing) -> OrderCodec::DecodeCommand (Phase 3 de
 ```
 
 The socket-facing reader/writer threads never touch the matching engine, and
-the engine-driving thread never touches a socket — they only exchange data
+the engine-driving thread never touches a socket - they only exchange data
 through the bounded SPSC queues documented in `spsc_queue.hpp`.
