@@ -1,0 +1,11 @@
+function(me_add_benchmark name)
+  add_executable(${name} ${ARGN} allocation_counter.cpp)
+  target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_link_libraries(${name} PRIVATE me_naive me_fast me_net Threads::Threads)
+endfunction()
+
+me_add_benchmark(bench_order_insertion bench_order_insertion.cpp)
+me_add_benchmark(bench_order_cancellation bench_order_cancellation.cpp)
+me_add_benchmark(bench_matching bench_matching.cpp)
+me_add_benchmark(bench_mixed_workload bench_mixed_workload.cpp)
+me_add_benchmark(bench_end_to_end_tcp bench_end_to_end_tcp.cpp)
